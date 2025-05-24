@@ -6,7 +6,7 @@ import argparse
 from datetime import datetime
 
 import config
-from src.utils import record_selection #, ensure_directories_exist
+from src.utils import record_selection
 from src.recipe_selector import select_recipes
 from src.shopping_list import generate_shopping_list
 from src.email_sender import send_email
@@ -67,21 +67,10 @@ def main():
     """
     # Set up command line argument parsing
     parser = argparse.ArgumentParser(description='Meal Planning Assistant')
-    # parser.add_argument('--plan', action='store_true', 
-    #                    help='Generate and send weekly meal plan')
     parser.add_argument('--test', action='store_true',
                        help='Test mode - only send email to wainger25@gmail.com')
     
     args = parser.parse_args()
-    
-    # Ensure all directories and files exist
-    # ensure_directories_exist()
-
-    # If --plan flag is provided, run the meal plan generation
-    # if args.plan:
-        # generate_weekly_plan(test_mode=args.test)
-    # else:
-    # Default behavior - run meal plan generation
     generate_weekly_plan(test_mode=args.test)
     
 if __name__ == "__main__":

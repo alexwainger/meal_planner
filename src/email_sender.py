@@ -32,20 +32,7 @@ def create_email_content(recipes, shopping_list, test_mode=False):
     Returns:
         str: HTML content for the email.
     """
-    # Create the HTML content
-    # <style>
-    #         body {{ font-family: Arial, sans-serif; line-height: 1.6; }}
-    #         h1 {{ color: #2c3e50; }}
-    #         h2 {{ color: #3498db; margin-top: 20px; }}
-    #         h3 {{ color: #16a085; margin-top: 15px; }}
-    #         ul {{ margin-top: 10px; }}
-    #         .recipe {{ margin-bottom: 15px; }}
-    #         .shopping-list {{ margin-top: 30px; }}
-    #         .staples {{ margin-top: 20px; color: #7f8c8d; }}
-    #         .recipe-index {{ font-weight: bold; color: #e74c3c; }}
-    #         .recipe-source {{ color: #3498db; font-weight: bold; }}
-    #     </style>
-    
+
     test_indicator = " [TEST MODE]" if test_mode else ""
     
     html = f"""
@@ -151,7 +138,6 @@ def create_email_content(recipes, shopping_list, test_mode=False):
             # Split the item to separate the ingredient from the recipe sources
             parts = item.split(" [")
             if len(parts) > 1:
-                # ingredient_part = parts[0]
                 ingredient_part = clean_ingredient_text(parts[0])
                 recipe_sources = "[" + parts[1]
                 html += f"            <li>{ingredient_part} <span class=\"recipe-source\">{recipe_sources}</span></li>\n"
