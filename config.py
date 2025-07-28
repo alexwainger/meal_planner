@@ -15,7 +15,14 @@ HISTORY_FILE = "data/history.csv"
 # Email settings
 EMAIL_SENDER = "mwahmeals@gmail.com"
 EMAIL_PASSWORD = "tgxo vamd qihe qxud"  # App password for Gmail (not the actual password)
-EMAIL_RECIPIENTS = ["wainger25@gmail.com", "marcyhuang@gmail.com", "mylesbkeating@gmail.com", "evans.abraham@gmail.com", "gildeah@gmail.com"]
+EMAIL_RECIPIENTS = [
+    "wainger25@gmail.com",
+    "marcyhuang@gmail.com",
+    "mylesbkeating@gmail.com",
+    "marianamuneramu@gmail.com",
+    "evans.abraham@gmail.com",
+    "gildeah@gmail.com"
+]
 
 # Recipe selection settings
 NUM_RECIPES_PER_WEEK = 3
