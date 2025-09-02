@@ -155,11 +155,11 @@ def create_email_content(recipes, shopping_list, test_mode=False):
             # Split the item to separate the ingredient from the recipe sources
             parts = item.split(" [")
             if len(parts) > 1:
-                ingredient_part = parts[0]
+                ingredient_part = clean_ingredient_text(parts[0])
                 recipe_sources = "[" + parts[1]
                 html += f"            <li>{ingredient_part} <span class=\"recipe-source\">{recipe_sources}</span></li>\n"
             else:
-                html += f"            <li>{item}</li>\n"
+                html += f"            <li>{clean_ingredient_text(item)}</li>\n"
         html += "            </ul>\n"
     
     html += """
