@@ -26,4 +26,4 @@ EMAIL_RECIPIENTS = [
 
 # Recipe selection settings
 NUM_RECIPES_PER_WEEK = 3
-REPEAT_WINDOW_DAYS = 30  # Don't repeat recipes within this many days
+REPEAT_WINDOW_DAYS = 45  # Don't repeat recipes within this many days
