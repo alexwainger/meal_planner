@@ -3,6 +3,7 @@ Main script for the meal planning application.
 """
 
 import argparse
+import sys
 from datetime import datetime
 
 import config
@@ -66,7 +67,9 @@ def main():
                        help='Test mode - only send email to wainger25@gmail.com')
     
     args = parser.parse_args()
-    generate_weekly_plan(test_mode=args.test)
+    success = generate_weekly_plan(test_mode=args.test)
+    if not success:
+        sys.exit(1)
     
 if __name__ == "__main__":
     main()
