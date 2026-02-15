@@ -12,6 +12,7 @@ import config
 
 def clean_ingredient_text(text):
     """Remove '.0' from whole numbers and 'count' unit, clean up whitespace."""
+    text = text.replace('\xa0', ' ')
     text = re.sub(r'(\d+)\.0\b', r'\1', text)
     text = re.sub(r'\bcount\b', '', text)
     return ' '.join(text.split())
@@ -200,13 +201,13 @@ def send_email(recipes, shopping_list, test_mode=False):
         text_content = create_plain_text_content(recipes, shopping_list, test_mode)
         html_content = create_email_content(recipes, shopping_list, test_mode)
 
-        msg.attach(MIMEText(text_content, 'plain'))
-        msg.attach(MIMEText(html_content, 'html'))
+        msg.attach(MIMEText(text_content, 'plain', 'utf-8'))
+        msg.attach(MIMEText(html_content, 'html', 'utf-8'))
 
         with smtplib.SMTP('smtp.gmail.com', 587) as server:
             server.starttls()
             server.login(config.EMAIL_SENDER, config.EMAIL_PASSWORD)
-            server.sendmail(config.EMAIL_SENDER, recipients, msg.as_string())
+            server.send_message(msg)
 
         if test_mode:
             print("Test email sent successfully to wainger25@gmail.com!")

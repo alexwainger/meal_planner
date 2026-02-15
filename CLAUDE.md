@@ -8,7 +8,17 @@ Weekly meal planning automation: selects random recipes from a Google Sheet, gen
 
 ## Commands
 
+### Local Development
+
+A virtual environment exists at `venv/`. Always use the venv Python to run locally:
+
 ```bash
+# Activate the virtual environment
+source venv/bin/activate
+
+# Set required environment variable before running
+export EMAIL_PASSWORD="<gmail app-specific password>"
+
 # Run in test mode (sends email only to wainger25@gmail.com)
 python main.py --test
 
@@ -18,6 +28,14 @@ python main.py
 # Install dependencies
 pip install -r requirements.txt
 ```
+
+Or run directly without activating:
+
+```bash
+EMAIL_PASSWORD="<password>" venv/bin/python main.py --test
+```
+
+### Production
 
 Scheduled via GitHub Actions (`.github/workflows/meal-plan.yml`): runs every Sunday at 9am EST. Can also be triggered manually via `workflow_dispatch`.
 
