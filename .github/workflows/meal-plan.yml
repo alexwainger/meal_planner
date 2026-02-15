@@ -1,0 +1,30 @@
+name: Weekly Meal Plan
+
+on:
+  schedule:
+    # Every Sunday at 9am EST (14:00 UTC)
+    - cron: '0 14 * * 0'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  send-meal-plan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Write service account key
+        run: echo '${{ secrets.SERVICE_ACCOUNT_KEY }}' > service-account-key.json
+
+      - name: Generate and send meal plan
+        env:
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          SPREADSHEET_ID: ${{ secrets.SPREADSHEET_ID }}
+        run: python main.py

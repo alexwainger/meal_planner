@@ -26,7 +26,6 @@ def select_recipes():
     # Get recipe IDs that were recently used (within repeat window)
     if not history_df.empty and "date_selected" in history_df.columns:
         recent_recipe_ids = history_df[history_df["date_selected"] > cutoff_date]["recipe_id"].unique()
-        print(recent_recipe_ids)
     else:
         recent_recipe_ids = []
     

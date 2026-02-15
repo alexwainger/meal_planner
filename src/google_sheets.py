@@ -8,27 +8,23 @@ from google.oauth2 import service_account # type: ignore
 
 import config
 
-# Define the scopes - updated to include write access
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+
+_service = None
 
 
 def get_google_sheets_service():
-    """
-    Get authenticated Google Sheets service using a service account.
-    
-    Returns:
-        googleapiclient.discovery.Resource: Authorized Google Sheets API service.
-    """
+    """Get authenticated Google Sheets service, cached for the process lifetime."""
+    global _service
+    if _service is not None:
+        return _service
     try:
-        # Use service account credentials from the specified file
         credentials = service_account.Credentials.from_service_account_file(
-            config.SERVICE_ACCOUNT_FILE, 
+            config.SERVICE_ACCOUNT_FILE,
             scopes=SCOPES
         )
-        
-        # Build and return the service
-        service = build('sheets', 'v4', credentials=credentials)
-        return service
+        _service = build('sheets', 'v4', credentials=credentials)
+        return _service
     except Exception as e:
         print(f"Error setting up Google Sheets service: {e}")
         raise
@@ -64,42 +60,6 @@ def get_sheet_data(sheet_name):
     except Exception as e:
         print(f"Error accessing Google Sheets: {e}")
         return []
-
-
-def update_sheet_data(sheet_name, values):
-    """
-    Update data in a specific sheet in the configured Google Spreadsheet.
-    
-    Args:
-        sheet_name (str): Name of the sheet to update.
-        values (list): List of rows to write to the sheet.
-        
-    Returns:
-        bool: True if successful, False otherwise.
-    """
-    try:
-        service = get_google_sheets_service()
-        sheet = service.spreadsheets()
-        
-        # Clear the sheet first
-        sheet.values().clear(
-            spreadsheetId=config.SPREADSHEET_ID,
-            range=f"{sheet_name}"
-        ).execute()
-        
-        # Update the sheet with new data
-        sheet.values().update(
-            spreadsheetId=config.SPREADSHEET_ID,
-            range=f"{sheet_name}!A1",
-            valueInputOption='RAW',
-            body={'values': values}
-        ).execute()
-        
-        return True
-        
-    except Exception as e:
-        print(f"Error updating Google Sheets: {e}")
-        return False
 
 
 def append_sheet_data(sheet_name, values):
@@ -167,36 +127,6 @@ def sheet_to_dataframe(sheet_name, dtypes):
                 df[col] = df[col].astype(dtype)
     
     return df
-
-
-def dataframe_to_sheet(sheet_name, df):
-    """
-    Write a pandas DataFrame to a Google Sheet.
-    
-    Args:
-        sheet_name (str): Name of the sheet to write to.
-        df (pandas.DataFrame): DataFrame to write.
-        
-    Returns:
-        bool: True if successful, False otherwise.
-    """
-    if df.empty:
-        # If DataFrame is empty, just write headers
-        headers = df.columns.tolist()
-        values = [headers]
-    else:
-        # Convert DataFrame to list of lists
-        # Handle datetime formatting
-        df_copy = df.copy()
-        for col in df_copy.columns:
-            if pd.api.types.is_datetime64_any_dtype(df_copy[col]):
-                df_copy[col] = df_copy[col].dt.strftime('%Y-%m-%d')
-        
-        headers = df_copy.columns.tolist()
-        data = df_copy.values.tolist()
-        values = [headers] + data
-    
-    return update_sheet_data(sheet_name, values)
 
 
 def get_recipes_df():
@@ -270,14 +200,3 @@ def get_history_df():
     return history_df
 
 
-def save_history_df(history_df):
-    """
-    Save history DataFrame to Google Sheets.
-    
-    Args:
-        history_df (pandas.DataFrame): DataFrame of history to save.
-        
-    Returns:
-        bool: True if successful, False otherwise.
-    """
-    return dataframe_to_sheet(config.HISTORY_SHEET_NAME, history_df)

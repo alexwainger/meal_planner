@@ -13,7 +13,6 @@ def load_recipes():
         return get_recipes_df()
     except Exception as e:
         print(f"Error loading recipes from Google Sheets: {e}")
-        # Return empty DataFrame with correct columns
         return pd.DataFrame(columns=["recipe_id", "name", "link", "tags"])
 
 
@@ -24,7 +23,6 @@ def load_ingredients():
         return get_ingredients_df()
     except Exception as e:
         print(f"Error loading ingredients from Google Sheets: {e}")
-        # Return empty DataFrame with correct columns
         return pd.DataFrame(columns=["recipe_id", "ingredient", "amount", "unit"])
 
 
@@ -35,35 +33,24 @@ def load_history():
         return get_history_df()
     except Exception as e:
         print(f"Error loading history from Google Sheets: {e}")
-        # Return empty DataFrame with correct columns
         return pd.DataFrame(columns=["recipe_id", "date_selected"])
 
 
-def save_history(history_df):
-    """Save selection history to Google Sheets."""
-    from src.google_sheets import save_history_df
+def record_selection(recipe_ids):
+    """Record that recipes were selected today by appending to the history sheet."""
+    from src.google_sheets import append_sheet_data
+    import config
+
+    today = datetime.now().strftime("%Y-%m-%d")
+    rows = [[rid, today] for rid in recipe_ids]
     try:
-        success = save_history_df(history_df)
+        success = append_sheet_data(config.HISTORY_SHEET_NAME, rows)
         if not success:
-            print("Failed to save history to Google Sheets")
+            print("Failed to record selection to Google Sheets")
         return success
     except Exception as e:
-        print(f"Error saving history to Google Sheets: {e}")
+        print(f"Error recording selection: {e}")
         return False
-
-
-def record_selection(recipe_ids):
-    """Record that recipes were selected today."""
-    history_df = load_history()
-    today = datetime.now()
-    
-    new_records = pd.DataFrame({
-        "recipe_id": recipe_ids,
-        "date_selected": [today] * len(recipe_ids)
-    })
-    
-    updated_history = pd.concat([history_df, new_records], ignore_index=True)
-    return save_history(updated_history)
 
 
 def format_ingredient(amount, unit, ingredient):
