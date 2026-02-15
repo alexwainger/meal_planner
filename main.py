@@ -39,20 +39,15 @@ def generate_weekly_plan(test_mode=False):
         # Send email
         if config.EMAIL_SENDER and config.EMAIL_RECIPIENTS:
             send_success = send_email(selected_recipes, shopping_list, test_mode=test_mode)
-            if send_success:
-                # Record the selections in history
-                record_selection(recipe_ids)
-                if test_mode:
-                    print("Test meal plan generated and sent successfully!")
-                else:
-                    print("Meal plan generated and sent successfully!")
-            else:
+            if not send_success:
                 print("Failed to send email. Check your email settings.")
-        else:
-            # Record the selections in history even if no email is sent
+                return False
+
+        # Record history only for real runs
+        if not test_mode:
             record_selection(recipe_ids)
-            print("Email sending is not configured. Add email settings to config.py to enable.")
-            print("Meal plan generated successfully!")
+
+        print("Meal plan generated and sent successfully!")
         
         return True
         
